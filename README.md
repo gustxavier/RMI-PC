@@ -1,3 +1,3 @@
 # RMI-PC
-Produtor consumidor em JAVA utilizando RM.
+Produtor consumidor em JAVA utilizando RMI.
 NetBeans
