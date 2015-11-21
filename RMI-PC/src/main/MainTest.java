@@ -22,12 +22,12 @@ import util.ServerRMI;
 public class MainTest {
 
     public static void main(String[] args) throws NotBoundException, RemoteException {
-
+        /**
         Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS, Contants.RMI_PORT);
         ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
 
         Manager frame = new Manager(buffer);
-        frame.setVisible(true);
+        frame.setVisible(true);*/
         System.out.print("Atualizando .gitignore");
 
     }
