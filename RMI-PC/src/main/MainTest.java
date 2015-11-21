@@ -28,7 +28,7 @@ public class MainTest {
 
         Manager frame = new Manager(buffer);
         frame.setVisible(true);*/
-        System.out.print("Atualizando .gitignore");
+        System.out.print("Atualizando");
 
     }
 
