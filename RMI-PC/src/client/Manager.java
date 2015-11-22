@@ -5,7 +5,10 @@
  */
 package client;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,9 +51,6 @@ public class Manager extends javax.swing.JFrame{
         t.start();
     }
 
-    public JList getBackupList() {
-        return backupList;
-    }
     
     public JList getMachineList() {
         return machineList;
@@ -79,8 +79,6 @@ public class Manager extends javax.swing.JFrame{
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         bufferPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        backupList = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -107,9 +105,6 @@ public class Manager extends javax.swing.JFrame{
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
         jTabbedPane1.setName(""); // NOI18N
 
-        backupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(backupList);
-
         jLabel1.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         jLabel1.setText("Buffer Size:");
 
@@ -130,47 +125,38 @@ public class Manager extends javax.swing.JFrame{
         bufferPanelLayout.setHorizontalGroup(
             bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bufferPanelLayout.createSequentialGroup()
+                .addGap(75, 75, 75)
                 .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(bufferPanelLayout.createSequentialGroup()
-                        .addGap(169, 169, 169)
-                        .addComponent(jLabel2))
-                    .addGroup(bufferPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                    .addComponent(jLabel2)
+                    .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(machinesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                    .addComponent(machinesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bufferLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bufferSizeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bufferSizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(144, Short.MAX_VALUE))
         );
         bufferPanelLayout.setVerticalGroup(
             bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bufferPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(bufferSizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(bufferLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bufferPanelLayout.createSequentialGroup()
-                        .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(bufferSizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(bufferLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(bufferPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(machinesLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(machinesLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(378, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Buffers", bufferPanel);
+        jTabbedPane1.addTab("Buffer", bufferPanel);
 
         machineList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         machineList.setToolTipText("");
@@ -216,7 +202,7 @@ public class Manager extends javax.swing.JFrame{
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Consumers"));
@@ -259,7 +245,7 @@ public class Manager extends javax.swing.JFrame{
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jFormattedTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFormattedTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Actions-arrow-right-icon.png"))); // NOI18N
@@ -300,7 +286,7 @@ public class Manager extends javax.swing.JFrame{
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(1, 1, 1)))
                 .addContainerGap())
@@ -350,7 +336,6 @@ public class Manager extends javax.swing.JFrame{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList backupList;
     private javax.swing.JLabel bufferLabel;
     private javax.swing.JPanel bufferPanel;
     private javax.swing.JLabel bufferSizeLabel;
@@ -368,7 +353,6 @@ public class Manager extends javax.swing.JFrame{
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JList machineList;
@@ -388,6 +372,8 @@ class ManagerImpl implements Runnable{
         
         this.frame = frame;
         currentBuffer = buffer;
+        frame.getBufferSizeLabel().setText(getBuffer().getBufferSize()+"");
+        frame.getBufferLabel().setText(getBuffer().getBufferName());
     }
 
     @Override
@@ -409,6 +395,7 @@ class ManagerImpl implements Runnable{
                 frame.getMachineList().setModel(lm);
                 frame.getMachineList().setSelectedValue(machine, true);
                 
+                frame.getMachinesLabel().setText(clients.size()+"");
             } catch (InterruptedException ex) {
                 Logger.getLogger(ManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
             } catch (RemoteException ex) {
@@ -427,11 +414,34 @@ class ManagerImpl implements Runnable{
             
         }
     }
-    public ServerRMI getBuffer(){
+    public synchronized ServerRMI getBuffer() {
         try {
             currentBuffer.isOnTheLine();
+            
         } catch (RemoteException ex) {
-            Logger.getLogger(ManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
+                currentBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                System.out.println("CHANGED TO "+currentBuffer.getBufferName());
+            } catch (RemoteException ex1) {
+                try {
+                    Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2,  Contants.RMI_PORT);
+                    currentBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                    System.out.println("CHANGED TO "+currentBuffer.getBufferName());
+                } catch (RemoteException ex2) {
+                    try {
+                        Thread.sleep(Contants.REQUEST_TIME);
+                        getBuffer();
+                    } catch (InterruptedException ex3) {
+                        Logger.getLogger(Slave.class.getName()).log(Level.SEVERE, null, ex3);
+                    }
+                } catch (NotBoundException ex2) {
+                    
+                }
+            } catch (NotBoundException ex1) {
+                
+            }
+            
         }
         
         return currentBuffer;

@@ -24,16 +24,17 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
     private ArrayList<String> clients;
     private int bufferSize;
     private ArrayList<Tasks> tasks;
+    private String name;
 
-    public Buffer(int size) throws RemoteException {
+    public Buffer(int size, String name) throws RemoteException {
         super();
 
         bufferSize = size;
         clients = new ArrayList<>();
         buffer = new ArrayList<>();
         tasks = new ArrayList<>();
-
-        System.out.println("RUNNING...");
+        this.name = name;
+        System.out.println("RUNNING "+name+"...");
     }
 
     @Override
@@ -90,8 +91,8 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
     }
 
     @Override
-    public synchronized void setBufferSize(int size) throws RemoteException {
-        this.bufferSize = size;
+    public synchronized int getBufferSize() throws RemoteException {
+        return bufferSize;
     }
 
     @Override
@@ -118,5 +119,21 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
             }
         }
         return null;
+    }
+    
+    @Override
+    public synchronized String getBufferName() throws RemoteException{
+        return name;
+    }
+
+    @Override
+    public synchronized void setBackup(ArrayList<String> buffer, int bufferSize, ArrayList<String> clients) throws RemoteException {
+        this.buffer = buffer;
+        this.bufferSize = bufferSize;
+        this.clients = clients;
+    }
+    
+    public synchronized ArrayList<String> getBuffer() throws RemoteException{
+        return buffer;
     }
 }

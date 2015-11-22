@@ -37,8 +37,7 @@ public class Main {
         if (args.length > 0 && args[0].compareTo("buffer") == 0) {
             try {
                 int size = Integer.valueOf(args[1]);
-
-                Buffer buffer = new Buffer(size);
+                Buffer buffer = new Buffer(size, args[2]);
                 
                 Registry registry = LocateRegistry.createRegistry(Contants.RMI_PORT);
                 registry.rebind(Contants.RMI_SERVER_ID, buffer);
@@ -66,7 +65,7 @@ public class Main {
             ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
             
             String machineName = buffer.login();
-            System.out.println("CONNECTED AT BUFFER AS "+machineName);
+            System.out.println("CONNECTED AT "+buffer.getBufferName()+" AS "+machineName);
             Slave client = new Slave(buffer, machineName);    
             
             Thread clientThread = new Thread(client);

@@ -5,7 +5,10 @@
  */
 package client;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,12 +86,33 @@ public class Slave implements Runnable {
 
     }
     
-    public ServerRMI getBuffer() {
+    public synchronized ServerRMI getBuffer() {
         try {
             buffer.isOnTheLine();
             
         } catch (RemoteException ex) {
-            //change buffer
+            try {
+                Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
+                buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                System.out.println("CHANGE TO "+buffer.getBufferName());
+            } catch (RemoteException ex1) {
+                try {
+                    Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2,  Contants.RMI_PORT);
+                    buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                    System.out.println("CHANGE TO "+buffer.getBufferName());
+                } catch (RemoteException ex2) {
+                    try {
+                        Thread.sleep(Contants.REQUEST_TIME);
+                        getBuffer();
+                    } catch (InterruptedException ex3) {
+                        Logger.getLogger(Slave.class.getName()).log(Level.SEVERE, null, ex3);
+                    }
+                } catch (NotBoundException ex2) {
+                    
+                }
+            } catch (NotBoundException ex1) {
+                
+            }
             
         }
         

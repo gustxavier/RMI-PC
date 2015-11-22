@@ -14,7 +14,7 @@ public class Contants {
     public static final String RMI_MANAGER_ID = "managerrmi";
     public static final int RMI_PORT = 2233;
     public static final String IP_ADRESS_BUFFER_1 = "181.41.197.248"; //181.41.197.248
-    public static final String IP_ADRESS_BUFFER_2 = "181.41.197.248"; //181.41.197.248
+    public static final String IP_ADRESS_BUFFER_2 = "localhost"; //181.41.197.248
     
     public static final long REQUEST_TIME = 5000;
 }
