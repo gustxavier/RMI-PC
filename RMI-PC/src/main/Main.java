@@ -5,9 +5,7 @@
  */
 package main;
 
-import client.Manager;
 import client.Slave;
-import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -18,7 +16,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.Buffer;
-import util.ClientRMI;
 import util.Contants;
 import util.ServerRMI;
 
@@ -58,17 +55,23 @@ public class Main {
             Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS,  Contants.RMI_PORT);
             ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
             
-            Manager frame = new Manager(buffer);
-            frame.setVisible(true);
+            //Manager frame = new Manager(buffer);
+            //frame.setVisible(true);
         }
 
         if (args.length > 0 && args[0].compareTo("client") == 0) {
             
             Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS, Contants.RMI_PORT);
             ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
-            ClientRMI client = new Slave(buffer);
-            buffer.login(client);
-            Thread shutdown = new Thread(new Shutdown(buffer, client));
+            
+            String machineName = buffer.login();
+            System.out.println("CONNECTED AT BUFFER AS "+machineName);
+            Slave client = new Slave(buffer, machineName);    
+            
+            Thread clientThread = new Thread(client);
+            clientThread.start();
+            
+            Thread shutdown = new Thread(new Shutdown(buffer, machineName));
             shutdown.start();
         }
 
@@ -79,11 +82,11 @@ public class Main {
 class Shutdown implements Runnable {
 
     private ServerRMI buffer;
-    private ClientRMI client;
+    private String machineName;
 
-    public Shutdown(ServerRMI buffer, ClientRMI client) {
+    public Shutdown(ServerRMI buffer, String machineName) {
         this.buffer = buffer;
-        this.client = client;
+        this.machineName = machineName;
     }
 
     @Override
@@ -92,7 +95,7 @@ class Shutdown implements Runnable {
         while (keyboard.hasNextLine()) {
             if (keyboard.nextLine().compareTo("exit") == 0) {
                 try {
-                    buffer.logout(client);
+                    buffer.logout(machineName);
                 } catch (RemoteException ex) {
                     Logger.getLogger(Shutdown.class.getName()).log(Level.SEVERE, null, ex);
                 }

@@ -5,19 +5,14 @@
  */
 package server;
 
-import java.rmi.AccessException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import util.ClientRMI;
-import util.Contants;
-import util.ManagerRMI;
 import util.ServerRMI;
+import util.Tasks;
 
 /**
  *
@@ -25,71 +20,30 @@ import util.ServerRMI;
  */
 public class Buffer extends UnicastRemoteObject implements ServerRMI {
 
-    private ArrayList<Object> buffer;
-    private ArrayList<ClientRMI> clients;
+    private ArrayList<String> buffer;
+    private ArrayList<String> clients;
     private int bufferSize;
-    private ArrayList<ServerRMI> backupServers;
-    private ArrayList<ManagerRMI> managers;
+    private ArrayList<Tasks> tasks;
 
     public Buffer(int size) throws RemoteException {
         super();
 
         bufferSize = size;
-        backupServers = new ArrayList<>();
         clients = new ArrayList<>();
         buffer = new ArrayList<>();
-        managers = new ArrayList<>();
-
-        Thread backupManager = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        synchronized (backupServers) {
-                            backupServers.wait();
-                            for (Iterator<ServerRMI> iterator = backupServers.iterator(); iterator.hasNext(); ) {
-                                ServerRMI s = iterator.next();
-                                try {
-                                    s.updateBackup(backupServers, buffer, clients, managers);
-                                } catch (RemoteException ex) {
-                                    iterator.remove();
-                                    continue;
-                                }
-                            }
-                            for (Iterator<ManagerRMI> iterator = managers.iterator(); iterator.hasNext();) {
-                                ManagerRMI m = iterator.next();
-                                try {
-                                    m.update(backupServers, buffer, clients);
-                                } catch (RemoteException ex) {
-                                    iterator.remove();
-                                    continue;
-                                }
-                            }
-                        }
-
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        backupManager.start();
+        tasks = new ArrayList<>();
 
         System.out.println("RUNNING...");
     }
 
     @Override
-    public synchronized void insertItem(Object obj) throws RemoteException {
+    public synchronized void insertItem(String obj) throws RemoteException {
         try {
             if (buffer.size() == bufferSize) {
                 this.wait();
             }
 
             buffer.add(obj);
-            synchronized (backupServers) {
-                backupServers.notifyAll();
-            }
             this.notifyAll();
 
             System.out.println("ITEM PRODUCED");
@@ -99,17 +53,14 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
     }
 
     @Override
-    public synchronized Object removeItem() throws RemoteException {
-        Object obj = null;
+    public synchronized String removeItem() throws RemoteException {
+        String obj = null;
         try {
             if (buffer.isEmpty()) {
                 this.wait();
             }
 
             obj = buffer.remove(0);
-            synchronized (backupServers) {
-                backupServers.notifyAll();
-            }
             this.notifyAll();
 
             System.out.println("ITEM CONSUMED");
@@ -120,83 +71,51 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
     }
 
     @Override
-    public void login(ClientRMI client) throws RemoteException {
-        clients.add(client);
-        client.setBackupServers(backupServers);
-        System.out.println("NEW MACHINE CONNECTED");
-        synchronized (backupServers) {
-            backupServers.notifyAll();
+    public synchronized String login() throws RemoteException {
+        int index = 0;
+        while (clients.contains("MACHINE " + index)) {
+            index++;
         }
+
+        clients.add("MACHINE " + index);
+        System.out.println("MACHINE " + index + " CONNECTED");
+        return "MACHINE " + index;
     }
 
     @Override
-    public void logout(ClientRMI client) throws RemoteException {
-        clients.remove(client);
-        System.out.println("MACHINE DISCONNECTED");
-        synchronized (backupServers) {
-            backupServers.notifyAll();
-        }
+    public synchronized void logout(String machineName) throws RemoteException {
+        clients.remove(machineName);
+        System.out.println(machineName + " DISCONNECTED");
+
     }
 
     @Override
-    public ArrayList<ClientRMI> getClients() throws RemoteException {
-        return clients;
-    }
-
-    @Override
-    public void addBackup(ServerRMI backupServer) throws RemoteException {
-        backupServers.add(backupServer);
-        backupServer.setBufferSize(bufferSize);
-        System.out.println("NEW BACKUP STABLISHED");
-        for (ClientRMI c : clients) {
-            try {
-                c.setBackupServers(backupServers);
-            } catch (RemoteException ex) {
-                clients.remove(c);
-                continue;
-            }
-        }
-
-        synchronized (backupServers) {
-            backupServers.notifyAll();
-        }
-    }
-
-    @Override
-    public void setBufferSize(int size) throws RemoteException {
+    public synchronized void setBufferSize(int size) throws RemoteException {
         this.bufferSize = size;
     }
 
     @Override
-    public void updateBackup(ArrayList<ServerRMI> bs, ArrayList<Object> b,
-            ArrayList<ClientRMI> c, ArrayList<ManagerRMI> m) throws RemoteException {
-        this.backupServers = bs;
-        this.backupServers.remove(this);
-        this.buffer = b;
-        this.clients = c;
-        this.managers = m;
-    }
-
-    @Override
-    public boolean isOnTheLine() {
+    public synchronized boolean isOnTheLine() {
         return true;
     }
 
     @Override
-    public void addManager(Registry registry) throws RemoteException {
-        try {
-            ManagerRMI manager = (ManagerRMI) registry.lookup(Contants.RMI_MANAGER_ID);
-            
-            managers.add(manager);
-            manager.setBufferSize(bufferSize);
-            System.out.println("MANAGER CONNECTED");
-            synchronized (backupServers) {
-                backupServers.notifyAll();
+    public synchronized ArrayList<String> getClients() throws RemoteException {
+        return clients;
+    }
+
+    public synchronized void setTasks(ArrayList<Tasks> tasks) throws RemoteException {
+        this.tasks = tasks;
+    }
+
+    public synchronized Tasks getTasks(String machineName) throws RemoteException {
+        for (Iterator<Tasks> iterator = tasks.iterator(); iterator.hasNext();) {
+            Tasks t = iterator.next();
+            if(t.getMachineName().compareTo(machineName) == 0){
+                iterator.remove();
+                return t;
             }
-        } catch (NotBoundException ex) {
-            Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (AccessException ex) {
-            Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 }
