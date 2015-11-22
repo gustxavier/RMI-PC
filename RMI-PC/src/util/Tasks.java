@@ -6,7 +6,6 @@
 package util;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  *
@@ -14,15 +13,52 @@ import java.util.ArrayList;
  */
 public class Tasks implements Serializable{
     private String machineName;
-    private ArrayList<Long> producersSettings;
-    private ArrayList<Long> consumersSettings;
+    private int producersNumber;
+    private long producersTime;
+    private int consumersNumber;
+    private long consumersTime;
 
-    public Tasks(String machineName, ArrayList<Long> producersSettings, ArrayList<Long> consumersSettings, int removeProducers, int removeConsumers) {
+    public Tasks(String machineName, int producersNumber, long producersTime, int consumersNumber, long consumersTime) {
         this.machineName = machineName;
-        this.producersSettings = producersSettings;
-        this.consumersSettings = consumersSettings;
+        this.producersNumber = producersNumber;
+        this.producersTime = producersTime;
+        this.consumersNumber = consumersNumber;
+        this.consumersTime = consumersTime;
     }
 
+    public int getProducersNumber() {
+        return producersNumber;
+    }
+
+    public void setProducersNumber(int producersNumber) {
+        this.producersNumber = producersNumber;
+    }
+
+    public long getProducersTime() {
+        return producersTime;
+    }
+
+    public void setProducersTime(long producersTime) {
+        this.producersTime = producersTime;
+    }
+
+    public int getConsumersNumber() {
+        return consumersNumber;
+    }
+
+    public void setConsumersNumber(int consumersNumber) {
+        this.consumersNumber = consumersNumber;
+    }
+
+    public long getConsumersTime() {
+        return consumersTime;
+    }
+
+    public void setConsumersTime(long consumersTime) {
+        this.consumersTime = consumersTime;
+    }
+
+    
     public String getMachineName() {
         return machineName;
     }
@@ -31,21 +67,6 @@ public class Tasks implements Serializable{
         this.machineName = machineName;
     }
 
-    public ArrayList<Long> getProducersSettings() {
-        return producersSettings;
-    }
-
-    public void setProducersSettings(ArrayList<Long> producersSettings) {
-        this.producersSettings = producersSettings;
-    }
-
-    public ArrayList<Long> getConsumersSettings() {
-        return consumersSettings;
-    }
-
-    public void setConsumersSettings(ArrayList<Long> consumersSettings) {
-        this.consumersSettings = consumersSettings;
-    }
     
     
 }

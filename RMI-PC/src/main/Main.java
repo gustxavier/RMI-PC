@@ -5,6 +5,7 @@
  */
 package main;
 
+import client.Manager;
 import client.Slave;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
@@ -52,16 +53,16 @@ public class Main {
 
         if (args.length > 0 && args[0].compareTo("manager") == 0) {
             
-            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS,  Contants.RMI_PORT);
+            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
             ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
             
-            //Manager frame = new Manager(buffer);
-            //frame.setVisible(true);
+            Manager frame = new Manager(buffer);
+            frame.setVisible(true);
         }
 
         if (args.length > 0 && args[0].compareTo("client") == 0) {
             
-            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS, Contants.RMI_PORT);
+            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1, Contants.RMI_PORT);
             ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
             
             String machineName = buffer.login();

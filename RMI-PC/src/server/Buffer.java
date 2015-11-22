@@ -37,7 +37,7 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
     }
 
     @Override
-    public synchronized void insertItem(String obj) throws RemoteException {
+    public synchronized void insertItem(String obj, String machineName) throws RemoteException {
         try {
             if (buffer.size() == bufferSize) {
                 this.wait();
@@ -46,14 +46,14 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
             buffer.add(obj);
             this.notifyAll();
 
-            System.out.println("ITEM PRODUCED");
+            System.out.println("ITEM PRODUCED BY "+ machineName);
         } catch (InterruptedException ex) {
             Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
-    public synchronized String removeItem() throws RemoteException {
+    public synchronized String removeItem(String machineName) throws RemoteException {
         String obj = null;
         try {
             if (buffer.isEmpty()) {
@@ -63,7 +63,7 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
             obj = buffer.remove(0);
             this.notifyAll();
 
-            System.out.println("ITEM CONSUMED");
+            System.out.println("ITEM CONSUMED BY "+machineName);
         } catch (InterruptedException ex) {
             Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -104,10 +104,11 @@ public class Buffer extends UnicastRemoteObject implements ServerRMI {
         return clients;
     }
 
-    public synchronized void setTasks(ArrayList<Tasks> tasks) throws RemoteException {
-        this.tasks = tasks;
+    public synchronized void addTasks(Tasks task) throws RemoteException {
+        tasks.add(task);
     }
 
+    @Override
     public synchronized Tasks getTasks(String machineName) throws RemoteException {
         for (Iterator<Tasks> iterator = tasks.iterator(); iterator.hasNext();) {
             Tasks t = iterator.next();

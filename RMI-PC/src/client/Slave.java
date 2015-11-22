@@ -25,7 +25,7 @@ public class Slave implements Runnable {
     private ArrayList<Thread> consumers;
 
     public Slave(ServerRMI buffer, String machineName) throws RemoteException {
-        super();
+        
         this.buffer = buffer;
         producers = new ArrayList<>();
         consumers = new ArrayList<>();
@@ -48,11 +48,11 @@ public class Slave implements Runnable {
                     }
                     producers = new ArrayList<>();
                     consumers = new ArrayList<>();
-                    for (int i = 0; i < t.getProducersSettings().size(); i++) {
-                        startProduction(t.getProducersSettings().get(i));
+                    for (int i = 0; i < t.getProducersNumber(); i++) {
+                        startProduction(t.getProducersTime());
                     }
-                    for (int i = 0; i < t.getConsumersSettings().size(); i++) {
-                        startConsumition(t.getConsumersSettings().get(i));
+                    for (int i = 0; i < t.getConsumersNumber(); i++) {
+                        startConsumition(t.getConsumersTime());
                     }
                 }
             } catch (RemoteException ex) {
@@ -95,6 +95,9 @@ public class Slave implements Runnable {
         return buffer;
     }
 
+    public String getMachineName(){
+        return machineName;
+    }
 }
 
 class ProducerRotine implements Runnable {
@@ -114,7 +117,7 @@ class ProducerRotine implements Runnable {
             try {
                 Thread.sleep(time);
                 String obj = "item";
-                slave.getBuffer().insertItem(obj);
+                slave.getBuffer().insertItem(obj, slave.getMachineName());
                 System.out.println("ITEM PRODUCED AND SENT TO BUFFER");
             } catch (InterruptedException ex) {
                 Logger.getLogger(ProducerRotine.class.getName()).log(Level.SEVERE, null, ex);
@@ -143,7 +146,7 @@ class ConsumerRotine implements Runnable {
         while (true) {
 
             try {
-                String obj = slave.getBuffer().removeItem();
+                String obj = slave.getBuffer().removeItem(slave.getMachineName());
                 System.out.println("ITEM REMOVED FROM BUFFER AND CONSUMED");
                 Thread.sleep(time);
 
