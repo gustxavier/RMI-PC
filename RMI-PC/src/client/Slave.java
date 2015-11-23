@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.ServerRMI;
 import util.Tasks;
-import util.Contants;
+import util.Constants;
 
 /**
  *
@@ -39,7 +39,7 @@ public class Slave implements Runnable {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(Contants.REQUEST_TIME);
+                Thread.sleep(Constants.REQUEST_TIME);
                 System.out.println("REQUEST FOR TASKS");
                 Tasks t = getBuffer().getTasks(machineName);
                 if (t != null) {
@@ -89,17 +89,17 @@ public class Slave implements Runnable {
             
         } catch (RemoteException ex) {
             try {
-                Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
-                buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1,  Constants.RMI_PORT);
+                buffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                 System.out.println("CHANGE TO "+buffer.getBufferName());
             } catch (RemoteException ex1) {
                 try {
-                    Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2,  Contants.RMI_PORT);
-                    buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                    Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_2,  Constants.RMI_PORT);
+                    buffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                     System.out.println("CHANGE TO "+buffer.getBufferName());
                 } catch (RemoteException ex2) {
                     try {
-                        Thread.sleep(Contants.REQUEST_TIME);
+                        Thread.sleep(Constants.REQUEST_TIME);
                         getBuffer();
                     } catch (InterruptedException ex3) {
                         Logger.getLogger(Slave.class.getName()).log(Level.SEVERE, null, ex3);

@@ -9,7 +9,7 @@ package util;
  *
  * @author jonathan
  */
-public class Contants {
+public class Constants {
     public static final String RMI_SERVER_ID = "bufferrmi";
     public static final String RMI_MANAGER_ID = "managerrmi";
     public static final int RMI_PORT = 2233;

@@ -17,7 +17,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.Buffer;
-import util.Contants;
+import util.Constants;
 import util.ServerRMI;
 
 /**
@@ -39,8 +39,8 @@ public class Main {
                 int size = Integer.valueOf(args[1]);
                 Buffer buffer = new Buffer(size, args[2]);
                 
-                Registry registry = LocateRegistry.createRegistry(Contants.RMI_PORT);
-                registry.rebind(Contants.RMI_SERVER_ID, buffer);
+                Registry registry = LocateRegistry.createRegistry(Constants.RMI_PORT);
+                registry.rebind(Constants.RMI_SERVER_ID, buffer);
 
             } catch (NumberFormatException ex) {
                 System.out.println("Invalid buffer size.");
@@ -52,8 +52,8 @@ public class Main {
 
         if (args.length > 0 && args[0].compareTo("manager") == 0) {
             
-            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
-            ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+            Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1,  Constants.RMI_PORT);
+            ServerRMI buffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
             
             Manager frame = new Manager(buffer);
             frame.setVisible(true);
@@ -61,8 +61,8 @@ public class Main {
 
         if (args.length > 0 && args[0].compareTo("client") == 0) {
             
-            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1, Contants.RMI_PORT);
-            ServerRMI buffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+            Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1, Constants.RMI_PORT);
+            ServerRMI buffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
             
             String machineName = buffer.login();
             System.out.println("CONNECTED AT "+buffer.getBufferName()+" AS "+machineName);

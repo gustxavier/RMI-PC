@@ -18,7 +18,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import util.GetScreenSize;
 import util.ServerRMI;
-import util.Contants;
+import util.Constants;
 import util.Tasks;
 
 /**
@@ -380,7 +380,7 @@ class ManagerImpl implements Runnable{
     public void run(){
         while(true){            
             try {
-                Thread.sleep(Contants.REQUEST_TIME);
+                Thread.sleep(Constants.REQUEST_TIME);
                 
                 clients = getBuffer().getClients();
                 DefaultListModel lm = new DefaultListModel();
@@ -420,17 +420,17 @@ class ManagerImpl implements Runnable{
             
         } catch (RemoteException ex) {
             try {
-                Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1,  Contants.RMI_PORT);
-                currentBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1,  Constants.RMI_PORT);
+                currentBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                 System.out.println("CHANGED TO "+currentBuffer.getBufferName());
             } catch (RemoteException ex1) {
                 try {
-                    Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2,  Contants.RMI_PORT);
-                    currentBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                    Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_2,  Constants.RMI_PORT);
+                    currentBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                     System.out.println("CHANGED TO "+currentBuffer.getBufferName());
                 } catch (RemoteException ex2) {
                     try {
-                        Thread.sleep(Contants.REQUEST_TIME);
+                        Thread.sleep(Constants.REQUEST_TIME);
                         getBuffer();
                     } catch (InterruptedException ex3) {
                         Logger.getLogger(Slave.class.getName()).log(Level.SEVERE, null, ex3);

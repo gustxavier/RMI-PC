@@ -12,7 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import util.Contants;
+import util.Constants;
 import util.ServerRMI;
 
 /**
@@ -24,18 +24,18 @@ public class SyncBuffer {
     public static void main(String args[]) throws NotBoundException {
         ServerRMI mainBuffer = null, backupBuffer = null;
         try {
-            Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1, Contants.RMI_PORT);
-            mainBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+            Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1, Constants.RMI_PORT);
+            mainBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
 
-            registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2, Contants.RMI_PORT);
-            backupBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+            registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_2, Constants.RMI_PORT);
+            backupBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
         } catch (RemoteException ex) {
             return;
         }
 
         while (true) {
             try {
-                Thread.sleep(Contants.REQUEST_TIME);
+                Thread.sleep(Constants.REQUEST_TIME);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SyncBuffer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -50,12 +50,12 @@ public class SyncBuffer {
                     backupBuffer = temp;
                     if (mainBuffer.getBufferName().compareTo("BUFFER1") == 0) {
                         
-                        Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_2, Contants.RMI_PORT);
-                        backupBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                        Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_2, Constants.RMI_PORT);
+                        backupBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                         
                     } else {
-                        Registry registry = LocateRegistry.getRegistry(Contants.IP_ADRESS_BUFFER_1, Contants.RMI_PORT);
-                        backupBuffer = (ServerRMI) registry.lookup(Contants.RMI_SERVER_ID);
+                        Registry registry = LocateRegistry.getRegistry(Constants.IP_ADRESS_BUFFER_1, Constants.RMI_PORT);
+                        backupBuffer = (ServerRMI) registry.lookup(Constants.RMI_SERVER_ID);
                         
                     }
                 } catch (RemoteException ex1) {
