@@ -63,7 +63,6 @@ public class Slave implements Runnable {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Slave.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 
@@ -73,7 +72,6 @@ public class Slave implements Runnable {
         thread.start();
         producers.add(thread);
         System.out.println("THREAD PRODUCER STARTED");
-
     }
 
 
@@ -83,7 +81,6 @@ public class Slave implements Runnable {
         thread.start();
         consumers.add(thread);
         System.out.println("THREAD CONSUMER STARTED");
-
     }
     
     public synchronized ServerRMI getBuffer() {
@@ -112,10 +109,8 @@ public class Slave implements Runnable {
                 }
             } catch (NotBoundException ex1) {
                 
-            }
-            
-        }
-        
+            }     
+        }  
         return buffer;
     }
 
@@ -150,7 +145,6 @@ class ProducerRotine implements Runnable {
 
                 continue;
             }
-
         }
     }
 }
@@ -183,5 +177,4 @@ class ConsumerRotine implements Runnable {
             }
         }
     }
-
 }

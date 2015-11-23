@@ -77,6 +77,5 @@ public class SyncBuffer {
                 Logger.getLogger(SyncBuffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 }

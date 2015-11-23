@@ -74,9 +74,7 @@ public class Main {
             Thread shutdown = new Thread(new Shutdown(buffer, machineName));
             shutdown.start();
         }
-
     }
-
 }
 
 class Shutdown implements Runnable {

@@ -65,8 +65,6 @@ public class Tasks implements Serializable{
 
     public void setMachineName(String machineName) {
         this.machineName = machineName;
-    }
-
-    
+    } 
     
 }
